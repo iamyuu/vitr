@@ -1,0 +1,86 @@
+{
+	"name": "vitr",
+	"private": true,
+	"version": "0.0.0",
+	"author": "Muhammad Yusuf <yusuf@iamyuu.dev> (https://iamyuu.dev)",
+	"scripts": {
+		"# general commands": "--------------------------------------------------",
+		"cz": "git-cz",
+		"# compiler commands": "--------------------------------------------------",
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"# test commands": "--------------------------------------------------",
+		"test": "is-ci-cli test:coverage test:watch",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"# linter commands": "--------------------------------------------------",
+		"lint": "eslint \"./src/**/*.{js,jsx,ts,tsx}\" --ignore-path .gitignore",
+		"format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,css}\" --ignore-path .gitignore",
+		"type-check": "tsc --pretty --noEmit",
+		"#": "--------------------------------------------------"
+	},
+	"dependencies": {
+		"@tanstack/react-query": "4.0.10",
+		"react": "18.2.0",
+		"react-dom": "18.2.0",
+		"react-error-boundary": "3.1.4",
+		"react-router-dom": "6.3.0",
+		"ufo": "0.8.5"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "17.0.3",
+		"@commitlint/config-conventional": "17.0.3",
+		"@commitlint/cz-commitlint": "17.0.3",
+		"@faker-js/faker": "7.3.0",
+		"@jackfranklin/test-data-bot": "2.0.0",
+		"@tanstack/react-query-devtools": "4.0.10",
+		"@testing-library/dom": "8.16.0",
+		"@testing-library/jest-dom": "5.16.4",
+		"@testing-library/react": "13.3.0",
+		"@testing-library/user-event": "14.3.0",
+		"@types/react": "18.0.15",
+		"@types/react-dom": "18.0.6",
+		"@vitejs/plugin-react": "2.0.0",
+		"c8": "7.12.0",
+		"eslint": "8.20",
+		"eslint-config-kentcdodds": "20.3",
+		"eslint-config-prettier": "8.5",
+		"eslint-import-resolver-alias": "1.1",
+		"eslint-import-resolver-typescript": "3.3",
+		"eslint-plugin-import": "2.26",
+		"eslint-plugin-jsx-a11y": "6.6",
+		"eslint-plugin-prettier": "4.2",
+		"eslint-plugin-react": "7.30",
+		"happy-dom": "6.0.4",
+		"husky": "8.0.1",
+		"is-ci-cli": "2.2.0",
+		"lint-staged": "13.0",
+		"msw": "0.44.2",
+		"prettier": "2.7",
+		"pretty-quick": "3.1",
+		"typescript": "4.7",
+		"vite": "3.0.3",
+		"vitest": "0.19.1"
+	},
+	"config": {
+		"commitizen": {
+			"path": "./node_modules/@commitlint/cz-commitlint"
+		}
+	},
+	"prettier": {
+		"arrowParens": "avoid",
+		"bracketSpacing": true,
+		"endOfLine": "auto",
+		"printWidth": 120,
+		"semi": true,
+		"singleQuote": true,
+		"jsxSingleQuote": true,
+		"trailingComma": "all",
+		"useTabs": true
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx}": "eslint --fix --cache --max-warnings 0",
+		"*.{js,jsx,ts,tsx,css}": "pretty-quick --staged"
+	}
+}
