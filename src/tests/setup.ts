@@ -6,7 +6,7 @@ import '@testing-library/jest-dom/extend-expect';
 
 import { beforeAll, afterAll, afterEach } from 'vitest';
 import { server } from './mocks/server';
-import { queryClient } from '~/utils/query-client';
+import { queryClient } from '~/libs/react-query';
 
 // enable API mocking in test runs using the same request handlers as for the client-side mocking.
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));

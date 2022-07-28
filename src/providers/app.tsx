@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RootErrorBoundary, RootPendingFallback } from '~/components/root';
-import { queryClient } from '~/utils/query-client';
+import { queryClient } from '~/libs/react-query';
 
 export function AppProviders(props: React.PropsWithChildren) {
 	return (

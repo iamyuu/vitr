@@ -1,6 +1,6 @@
 import { joinURL, withQuery, type QueryObject } from 'ufo';
 import { API_URL } from '~/constants/env';
-// import { queryClient } from '~/utils/query-client';
+// import { queryClient } from '~/libs/react-query';
 // import { getToken, flushStorage } from '~/features/auth';
 
 interface RequestInitClient extends Omit<RequestInit, 'body'> {
