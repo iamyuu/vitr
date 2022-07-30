@@ -12,3 +12,14 @@ createRoot(root).render(
 		</AppProviders>
 	</StrictMode>,
 );
+
+const showErrorOverlay = (err: unknown) => {
+	const ErrorOverlay = customElements.get('vite-error-overlay');
+
+	if (!ErrorOverlay || import.meta.env.PROD) return;
+
+	document.body.appendChild(new ErrorOverlay(err));
+};
+
+window.addEventListener('error', showErrorOverlay);
+window.addEventListener('unhandledrejection', ({ reason }) => showErrorOverlay(reason));
