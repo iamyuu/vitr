@@ -14,6 +14,18 @@ interface HttpResponse<TData> {
 	data: TData;
 }
 
+export class HttpError extends Error {
+	public status: number;
+	public info: unknown;
+
+	constructor(status: number, message?: string, info?: unknown) {
+		super(message ?? 'Internal Server Error');
+		this.name = 'HttpError';
+		this.status = status;
+		this.info = info ?? {};
+	}
+}
+
 /**
  * HTTP request with several thing already configured
  */
@@ -69,11 +81,9 @@ export function http<TData = unknown>(endpoint: string, requestInit?: RequestIni
 		// 	window.location.assign(window.location.origin);
 		// }
 
-		const reason = (responseData as HttpResponse<never>).message || 'Internal Server Error';
+		const reason = (responseData as HttpResponse<never>).message;
 
-		const error = new Error(reason);
-		error.name = 'HttpError';
-		throw error;
+		throw new HttpError(response.status, reason, responseData);
 	});
 
 	return Object.assign(fetcher, { cancel: abort });
