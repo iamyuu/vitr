@@ -14,9 +14,16 @@ createRoot(root).render(
 );
 
 const showErrorOverlay = (err: unknown) => {
-	const ErrorOverlay = customElements.get('vite-error-overlay');
+	const elementName = 'vite-error-overlay';
+	const ErrorOverlay = customElements.get(elementName);
 
-	if (!ErrorOverlay || import.meta.env.PROD) return;
+	// prevent double overlay
+	const isAlreadyAppear = document.body.contains(document.querySelector(elementName));
+	const isDev = import.meta.env.DEV;
+
+	if (!ErrorOverlay || isAlreadyAppear || !isDev) {
+		return;
+	}
 
 	document.body.appendChild(new ErrorOverlay(err));
 };
