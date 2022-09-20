@@ -4,7 +4,13 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config
 export default defineConfig({
+	// https://vitejs.dev/config/server-options.html
+	server: {
+		port: 3000,
+	},
+
 	resolve: {
+		// https://vitejs.dev/config/shared-options.html#resolve-alias
 		alias: {
 			'~': resolve('src'),
 		},
