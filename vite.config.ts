@@ -20,11 +20,4 @@ export default defineConfig({
 		// https://github.com/vitejs/vite/tree/main/packages/plugin-react
 		react(),
 	],
-
-	// https://vitest.dev/config
-	test: {
-		globals: true,
-		environment: 'happy-dom',
-		setupFiles: ['./src/tests/setup.ts'],
-	},
 });
