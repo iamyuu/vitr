@@ -1,90 +1,51 @@
-import { joinURL, withQuery, type QueryObject } from 'ufo';
-import { API_URL } from '~/constants/env';
-// import { queryClient } from '~/libs/react-query';
-// import { getToken, flushStorage } from '~/features/auth';
+import ky, { HTTPError, type NormalizedOptions } from 'ky';
+import { env } from '~/constants/env';
+import { getToken } from '~/utils/session';
 
-interface RequestInitClient extends Omit<RequestInit, 'body'> {
-	data?: Record<string, unknown> | FormData;
-	params?: QueryObject;
-}
-
-interface HttpResponse<TData> {
-	status: number;
-	message: string;
-	data: TData;
-}
-
-export class HttpError extends Error {
-	public status: number;
-	public info: unknown;
-
-	constructor(status: number, message?: string, info?: unknown) {
-		super(message ?? 'Internal Server Error');
-		this.name = 'HttpError';
-		this.status = status;
-		this.info = info ?? {};
-	}
+/**
+ * Check if the error is a HTTP error
+ */
+export function isHttpError(error: unknown): error is HTTPError {
+	return error instanceof HTTPError;
 }
 
 /**
- * HTTP request with several thing already configured
+ * Add Authorization header to every request
  */
-export function http<TData = unknown>(endpoint: string, requestInit?: RequestInitClient) {
-	if (!API_URL) {
-		throw new Error('`VITE_API_URL` is not defined. Seems you forgot add on `.env` file');
+function authHook(request: Request) {
+	const token = getToken();
+	if (token) {
+		request.headers.set('Authorization', `Bearer ${token}`);
 	}
 
-	// const accessToken = getToken();
-	const { signal, abort } = new AbortController();
-	const { data, params = {}, headers: customHeaders, ...customConfig } = requestInit ?? {};
-
-	const url = endpoint.includes('http') ? endpoint : joinURL(API_URL, endpoint);
-	const input = withQuery(url, params);
-
-	const headers = new Headers({
-		Accept: 'application/json',
-		'Content-Type': 'application/json',
-		...customHeaders,
-	});
-
-	// if (accessToken) {
-	// 	headers.append('Authorization', `Bearer ${accessToken}`);
-	// }
-
-	let payload: FormData | string;
-
-	if (data instanceof FormData) {
-		headers.delete('Content-Type');
-		payload = data;
-	} else {
-		payload = JSON.stringify(data);
-	}
-
-	const config = {
-		signal,
-		headers,
-		method: data ? 'POST' : 'GET',
-		body: data ? payload : undefined,
-		...customConfig,
-	};
-
-	const fetcher = window.fetch(input, config).then(async response => {
-		const responseData = (await response.json()) as unknown;
-
-		if (response.ok) {
-			return responseData as HttpResponse<TData>;
-		}
-
-		// if (response.status === 401) {
-		// 	flushStorage();
-		// 	queryClient.clear();
-		// 	window.location.assign(window.location.origin);
-		// }
-
-		const reason = (responseData as HttpResponse<never>).message;
-
-		throw new HttpError(response.status, reason, responseData);
-	});
-
-	return Object.assign(fetcher, { cancel: abort });
+	return request;
 }
+
+/**
+ * Log HTTP errors for monitoring
+ */
+function errorLogger(_request: Request, _options: NormalizedOptions, response: Response) {
+	if (response.status >= 500 && response.status < 600) {
+		// log the error (e.g. Sentry)
+	}
+
+	return response;
+}
+
+/**
+ * Create a HTTP client with default settings
+ */
+export const http = ky.create({
+	// Set API URL as default prefix
+	prefixUrl: env.VITE_API_URL,
+	// Set default headers
+	headers: {
+		'Content-Type': 'application/json',
+	},
+	// Disable Ky's retry mechanism, will be handled by react-query
+	retry: 0,
+	hooks: {
+		beforeRequest: [authHook],
+		afterResponse: [errorLogger],
+	},
+});

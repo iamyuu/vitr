@@ -3,7 +3,6 @@
 		"target": "ESNext",
 		"useDefineForClassFields": true,
 		"lib": ["DOM", "DOM.Iterable", "ESNext"],
-		"types": ["vitest"],
 		"allowJs": false,
 		"skipLibCheck": true,
 		"esModuleInterop": false,
@@ -21,5 +20,5 @@
 			"~/*": ["./src/*"]
 		}
 	},
-	"include": ["src", "vitest.config.ts", "vite.config.ts"]
+	"include": ["src"]
 }

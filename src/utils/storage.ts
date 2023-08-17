@@ -1,4 +1,4 @@
-const storagePrefix = '_vitr_';
+const storagePrefix = '__';
 
 export const storage = {
 	get: <TValue = unknown>(key: string, defaultValue?: TValue) => {

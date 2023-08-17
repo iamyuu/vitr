@@ -48,6 +48,8 @@ export function createContext<ContextType>(options: CreateContextOptions = {}) {
 		if (!context && strict) {
 			const error = new Error(errorMessage);
 			error.name = 'ContextError';
+			// @ts-expect-error -- stack trace
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 			Error.captureStackTrace(error, useContext);
 			throw error;
 		}

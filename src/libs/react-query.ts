@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { http } from '~/utils/http';
+import { toast } from 'sonner';
 
 const MAX_RETRY = 3;
 
@@ -10,12 +10,19 @@ export const queryClient = new QueryClient({
 			useErrorBoundary: true,
 			refetchOnWindowFocus: false,
 			retry: failureCount => failureCount <= MAX_RETRY,
-			queryFn: ({ queryKey, signal }) => {
-				const [endpoint] = queryKey;
+		},
+		mutations: {
+			onError: (error, _variables, recover) => {
+				// Show toast notification
+				const reason = error instanceof Error ? error.message : 'Something went wrong, please try again later';
+				toast.error(reason);
 
-				if (typeof endpoint === 'string') {
-					return http(endpoint, { signal });
+				// Recover from error, if possible
+				if (typeof recover === 'function') {
+					return recover();
 				}
+
+				return null;
 			},
 		},
 	},

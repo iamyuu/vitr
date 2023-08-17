@@ -17,7 +17,7 @@ export default defineConfig({
 	},
 
 	plugins: [
-		// https://github.com/vitejs/vite/tree/main/packages/plugin-react
+		// https://github.com/vitejs/vite-plugin-react-swc
 		react(),
 	],
 });
