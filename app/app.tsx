@@ -5,7 +5,7 @@ import { router } from "~/libs/router";
 import { AppProviders } from "~/providers/app-providers";
 import "~/styles/global.css";
 
-function App() {
+export function App() {
 	// We put the RouterProvider here instead of in app-providers
 	// because we want to exclude that from the test environment
 	return <RouterProvider router={router} />;
