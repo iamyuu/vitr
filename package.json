@@ -8,7 +8,7 @@
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
-		"lint": "biome check --changed --apply ./app",
+		"lint": "biome check . --apply",
 		"test": "is-ci-cli \"test:ci\" \"test:watch\"",
 		"test:ci": "vitest run --coverage",
 		"test:watch": "vitest --coverage",

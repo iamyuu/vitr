@@ -41,6 +41,8 @@ export default defineConfig({
 		coverage: {
 			include: ["app/**"],
 			exclude: ["app/test/**", "app/generated/**"],
+			reporter: ["html", "text-summary", "json-summary", "json"],
+			reportOnFailure: true,
 		},
 	},
 });

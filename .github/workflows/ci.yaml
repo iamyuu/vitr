@@ -1,12 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-    - 'app/**'
-
   pull_request:
     branches:
       - main
@@ -26,34 +20,41 @@ jobs:
   quality:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
+      - uses: actions/setup-node@v4
         with:
-          version: latest
+          node-version: 21
+          cache: 'pnpm'
 
-      - name: Run Biome
-        run: biome ci .
+      - name: Install dependencies
+        run: pnpm install
+
+      - uses: mongolyy/reviewdog-action-biome@v1
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
 
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [21]
-      fail-fast: false
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: pnpm/action-setup@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 21
         cache: 'pnpm'
 
     - name: Install dependencies
@@ -61,3 +62,7 @@ jobs:
 
     - name: Test
       run: pnpm run test
+
+    - name: Report Coverage
+      uses: davelosert/vitest-coverage-report-action@v2
+      if: always()
