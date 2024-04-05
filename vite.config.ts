@@ -1,6 +1,9 @@
-import { resolve } from 'path';
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+/// <reference types="vitest" />
+
+import { resolve } from "node:path";
+import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
+import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config
 export default defineConfig({
@@ -12,12 +15,32 @@ export default defineConfig({
 	resolve: {
 		// https://vitejs.dev/config/shared-options.html#resolve-alias
 		alias: {
-			'~': resolve('src'),
+			"~": resolve("app"),
 		},
 	},
 
 	plugins: [
+		// https://tanstack.com/router/v1/docs/framework/react/guide/file-based-routing#options
+		TanStackRouterVite({
+			routesDirectory: "app/routes",
+			generatedRouteTree: "app/generated/route.ts",
+			routeFileIgnorePrefix: "-",
+			quoteStyle: "double",
+			semicolons: true,
+		}),
+
 		// https://github.com/vitejs/vite-plugin-react-swc
 		react(),
 	],
+
+	// https://vitest.dev/config
+	test: {
+		globals: true,
+		environment: "happy-dom",
+		setupFiles: "./app/test/setup.ts",
+		coverage: {
+			include: ["app/**"],
+			exclude: ["app/test/**", "app/generated/**"],
+		},
+	},
 });
