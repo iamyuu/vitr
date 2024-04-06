@@ -105,9 +105,10 @@ export function useFormMutation<
 			/**
 			 * Set the attributes for the form element
 			 */
-			getFormProps: () => ({
-				onSubmit,
-			}),
+			getFormProps: () =>
+				({
+					onSubmit,
+				}) satisfies React.FormHTMLAttributes<HTMLFormElement>,
 		},
 	};
 }

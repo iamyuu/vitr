@@ -7,6 +7,8 @@ import {
 	useForm as useHookForm,
 } from "react-hook-form";
 import type { z } from "zod";
+import type { FormFieldProps } from "~/components/form/form-field";
+import type { ButtonProps } from "~/components/ui/button";
 
 export interface UseFormOptions<TFields extends FieldValues>
 	extends Omit<UseFormProps<TFields>, "resolver"> {
@@ -77,18 +79,16 @@ export function useForm<TValues extends FieldValues = FieldValues>({
 			({
 				...form.register(name),
 				...form.getFieldState(name),
-			}) as const,
+			}) satisfies Partial<FormFieldProps>,
 
 		/**
 		 * Set the props for the button
 		 */
-		getButtonSubmitProps: (
-			props: React.ButtonHTMLAttributes<HTMLButtonElement> = {},
-		) =>
+		getButtonSubmitProps: (props: ButtonProps = {}) =>
 			({
 				...props,
 				disabled: form.formState.isSubmitting || props.disabled,
 				type: "submit",
-			}) as const,
+			}) satisfies ButtonProps,
 	};
 }
