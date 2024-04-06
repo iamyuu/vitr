@@ -7,7 +7,7 @@ import {
 import { isHttpError } from "~/libs/http";
 import type { RouterContext } from "~/libs/router";
 
-const publicRoutes = ["/auth/login"];
+const publicRoutes = ["/login"];
 
 export const Route = createRootRouteWithContext<RouterContext>()({
 	/**
@@ -21,7 +21,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 		}
 
 		const redirectToLogin = () =>
-			redirect({ to: "/auth/login", search: { redirect: location.href } });
+			redirect({ to: "/login", search: { redirect: location.href } });
 
 		// Get the session from the server first to check if the user is authenticated
 		try {
