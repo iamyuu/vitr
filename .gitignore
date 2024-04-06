@@ -30,3 +30,6 @@ node_modules
 
 # vite
 dist
+
+# generated files from tanstack router
+app/generated/route
