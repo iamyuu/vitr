@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { env } from "~/constants/env";
-import { db } from "~/test/mocks/db";
-import { hash } from "~/test/mocks/utils";
+import { db } from "~/tests/mocks/db";
+import { hash } from "~/tests/mocks/utils";
 
 const namespace = `${env.VITE_API_URL}/auth`;
 
