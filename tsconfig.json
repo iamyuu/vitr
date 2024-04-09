@@ -12,7 +12,7 @@
 		"module": "ESNext",
 		"moduleResolution": "Node",
 		"resolveJsonModule": true,
-		"types": ["vitest/globals"],
+		"types": ["vitest/globals", "unplugin-icons/types/react"],
 		"isolatedModules": true,
 		"noEmit": true,
 		"jsx": "react-jsx",

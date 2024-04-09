@@ -3,6 +3,8 @@
 import { resolve } from "node:path";
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import react from "@vitejs/plugin-react-swc";
+import { FileSystemIconLoader } from "unplugin-icons/loaders";
+import icons from "unplugin-icons/vite";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config
@@ -31,6 +33,15 @@ export default defineConfig({
 
 		// https://github.com/vitejs/vite-plugin-react-swc
 		react(),
+
+		// https://github.com/unplugin/unplugin-icons?tab=readme-ov-file#options
+		icons({
+			compiler: "jsx",
+			jsx: "react",
+			customCollections: {
+				"my-icons": FileSystemIconLoader("./app/assets/icons"),
+			},
+		}),
 	],
 
 	// https://vitest.dev/config
