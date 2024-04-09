@@ -4,6 +4,6 @@ import { LoginSearchSchema } from "~/features/auth/schema/login-schema";
 export const Route = createFileRoute("/login")({
 	validateSearch: LoginSearchSchema,
 	component: lazyRouteComponent(
-		() => import("~/features/auth/screens/page-login"),
+		() => import("~/features/auth/screens/login-page"),
 	),
 });
