@@ -6,5 +6,6 @@ export const env = z
 		PROD: z.boolean(),
 		BASE_URL: z.string(),
 		VITE_API_URL: z.string().url(),
+		VITE_ENABLE_MOCKING: z.boolean().default(false),
 	})
 	.parse(import.meta.env);
