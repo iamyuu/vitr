@@ -11,9 +11,15 @@ import { DataTablePagination } from "./data-table-pagination";
 
 export interface DataTableProps<TData> {
 	/**
-	 * The table instance returned from useDataTable hook with pagination, sorting, filtering, etc.
+	 * The table instance returned from useReactTable hook with pagination, sorting, filtering, etc.
 	 */
 	table: TanstackTable<TData>;
+
+	/**
+	 * Whether the table is in a pending transition state.
+	 * e.g. when user is navigating to a different page or applying filters.
+	 */
+	isPendingTransition?: boolean;
 
 	/**
 	 * A custom empty state to render when there are no rows in the table.
@@ -25,6 +31,7 @@ export interface DataTableProps<TData> {
 export function DataTable<TData>({
 	table,
 	renderEmptyState,
+	isPendingTransition,
 }: DataTableProps<TData>) {
 	const emptyState = renderEmptyState ? (
 		renderEmptyState()
@@ -62,7 +69,7 @@ export function DataTable<TData>({
 						))}
 					</TableHeader>
 
-					<TableBody>
+					<TableBody className={isPendingTransition ? "opacity-50" : ""}>
 						{table.getRowModel().rows?.length
 							? table.getRowModel().rows.map((row) => (
 									<TableRow

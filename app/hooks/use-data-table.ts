@@ -12,6 +12,7 @@ import {
 	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
+import * as React from "react";
 import type { DataTableProps } from "~/components/data-table";
 import type { DataTableFilterField } from "~/components/data-table/data-table-toolbar";
 
@@ -60,6 +61,8 @@ interface UseDataTableOptions<TData, TValue>
 export function useDataTable<TData, TValue>(
 	options: UseDataTableOptions<TData, TValue>,
 ) {
+	const [isPendingTransition, startTransition] = React.useTransition();
+
 	const router = useRouter();
 	const searchParams = new URLSearchParams(router.history.location.search);
 
@@ -94,32 +97,42 @@ export function useDataTable<TData, TValue>(
 		manualPagination: true,
 		getPaginationRowModel: getPaginationRowModel(),
 		onPaginationChange: (updaterOrValue) => {
-			const nextState = functionalUpdate(updaterOrValue, pagination);
+			// Tell React to keep rendering the UI while the transition is in progress
+			startTransition(() => {
+				const nextState = functionalUpdate(updaterOrValue, pagination);
 
-			router.navigate({
-				search: (prev) => ({
-					// Keep the existing search params, but update the pagination
-					...prev,
-					page_size: nextState.pageSize,
-					page_index: nextState.pageIndex,
-				}),
+				router.navigate({
+					// @ts-expect-error -- params are not typed
+					search: (prev) => ({
+						// Keep the existing search params, but update the pagination
+						...prev,
+						page_size: nextState.pageSize,
+						page_index: nextState.pageIndex,
+					}),
+				});
 			});
 		},
 
 		manualFiltering: true,
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnFiltersChange: (updaterOrValue) => {
-			const nextState = functionalUpdate(updaterOrValue, columnFilters).reduce(
-				(acc, filter) =>
-					Object.assign({}, acc, {
-						[filter.id]: filter.value,
-					}),
-				{},
-			);
+			// Tell React to keep rendering the UI while the transition is in progress
+			startTransition(() => {
+				const nextState = functionalUpdate(
+					updaterOrValue,
+					columnFilters,
+				).reduce(
+					(acc, filter) =>
+						Object.assign({}, acc, {
+							[filter.id]: filter.value,
+						}),
+					{},
+				);
 
-			router.navigate({
-				// Serialize the column filters to the URL search params
-				search: nextState,
+				router.navigate({
+					// Serialize the column filters to the URL search params
+					search: nextState,
+				});
 			});
 		},
 
@@ -130,6 +143,7 @@ export function useDataTable<TData, TValue>(
 
 	return {
 		table,
+		isPendingTransition,
 
 		/**
 		 * Set the props for the `DataTable` component
@@ -137,6 +151,7 @@ export function useDataTable<TData, TValue>(
 		getDataTableProps: () =>
 			({
 				table,
+				isPendingTransition,
 			}) satisfies DataTableProps<TData>,
 
 		/**
