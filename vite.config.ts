@@ -1,59 +1,85 @@
-/// <reference types="vitest" />
+import { sentryVitePlugin as sentry } from '@sentry/vite-plugin';
+import { TanStackRouterVite as router } from '@tanstack/router-plugin/vite';
+import react from '@vitejs/plugin-react-swc';
+import unoCSS from 'unocss/vite';
+import { defineConfig } from 'vite';
+import tsPaths from 'vite-tsconfig-paths';
+import { defaultExclude } from 'vitest/config';
 
-import { resolve } from "node:path";
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
-import react from "@vitejs/plugin-react-swc";
-import { FileSystemIconLoader } from "unplugin-icons/loaders";
-import icons from "unplugin-icons/vite";
-import { defineConfig } from "vite";
+const sentryToken = process.env.VITE_SENTRY_AUTH_TOKEN;
 
-// https://vitejs.dev/config
 export default defineConfig({
-	// https://vitejs.dev/config/server-options.html
-	server: {
-		port: 3000,
-	},
+  define: {
+    'import.meta.vitest': 'undefined',
+  },
 
-	resolve: {
-		// https://vitejs.dev/config/shared-options.html#resolve-alias
-		alias: {
-			"~": resolve("app"),
-		},
-	},
+  build: {
+    sourcemap: !!sentryToken,
+  },
 
-	plugins: [
-		// https://tanstack.com/router/v1/docs/framework/react/guide/file-based-routing#options
-		TanStackRouterVite({
-			routesDirectory: "app/routes",
-			generatedRouteTree: "app/generated/route.ts",
-			routeFileIgnorePrefix: "-",
-			quoteStyle: "double",
-			semicolons: true,
-		}),
+  plugins: [
+    router({
+      routesDirectory: 'src/routes',
+      generatedRouteTree: 'src/generated/route.ts',
+      autoCodeSplitting: true,
+      semicolons: true,
+      routeTreeFileHeader: ['// @ts-nocheck', '// biome-ignore format: generated file'],
+      routeTreeFileFooter: [],
+    }),
 
-		// https://github.com/vitejs/vite-plugin-react-swc
-		react(),
+    react(),
 
-		// https://github.com/unplugin/unplugin-icons?tab=readme-ov-file#options
-		icons({
-			compiler: "jsx",
-			jsx: "react",
-			customCollections: {
-				"my-icons": FileSystemIconLoader("./app/assets/icons"),
-			},
-		}),
-	],
+    unoCSS(),
 
-	// https://vitest.dev/config
-	test: {
-		globals: true,
-		environment: "happy-dom",
-		setupFiles: "./app/test/setup.ts",
-		coverage: {
-			include: ["app/**"],
-			exclude: ["app/test/**", "app/generated/**"],
-			reporter: ["html", "text-summary", "json-summary", "json"],
-			reportOnFailure: true,
-		},
-	},
+    tsPaths(),
+
+    sentry({
+      url: process.env.VITE_SENTRY_URL,
+      org: process.env.VITE_SENTRY_ORG,
+      project: process.env.VITE_SENTRY_PROJECT,
+      disable: !sentryToken,
+      authToken: sentryToken,
+      sourcemaps: {
+        filesToDeleteAfterUpload: ['./build/client/assets/**/*.js.map'],
+      },
+    }),
+  ],
+
+  test: {
+    css: true,
+    environment: 'happy-dom',
+    setupFiles: ['./vitest.setup.ts'],
+    includeSource: ['src/**/*.{js,ts}'],
+    exclude: [...defaultExclude, '**/e2e/**'],
+    browser: {
+      name: 'chromium',
+      provider: 'playwright',
+    },
+    coverage: {
+      enabled: true,
+      provider: 'istanbul',
+      thresholds: {
+        statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80,
+
+        'src/utils/**.ts': { 100: true },
+      },
+      include: ['src/**'],
+      exclude: [
+        'src/app.tsx',
+        'src/entry.tsx',
+        'src/types/reset.d.ts',
+        'src/constants/**',
+        'src/providers/router-provider.tsx',
+        'src/routes/__root.tsx',
+        'src/generated/**',
+        'src/utils/query-client.ts',
+        'src/tests/**',
+      ],
+      reporter: ['html', 'text-summary', 'json-summary'],
+      reportOnFailure: true,
+    },
+  },
 });

@@ -17,19 +17,22 @@ pids
 # Coverage directory used by tools like istanbul
 coverage
 *.lcov
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # Dependency directories
 node_modules
-
-# eslint cache
-.eslintcache
 
 # dotenv environment variable files
 .env
 *.local
 
-# vite
-dist
-
-# generated files from tanstack router
-app/generated/route
+# Build files and caches
+/.cache
+/dist
+/build
+/public/build
+/src/generated/route
+/e2e/.auth
